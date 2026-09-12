@@ -88,11 +88,107 @@ Ao final, o schema `bronze` ficou com as 7 tabelas esperadas, cada uma com o sch
 ### Scripts
 Não se aplica nesta etapa, a carga foi feita via interface gráfica do Databricks (upload direto), sem necessidade de notebook ou script de ingestão, já que o volume e a natureza estática do dataset não justificavam automação nesta fase.
  
-## Modelagem e Catálogo de Dados
+## 3. Modelagem e catálogo
  
 ### Modelo escolhido: Esquema Estrela
 Entre Estrela, Snowflake e Flat, o **Esquema Estrela** foi escolhido porque com o este modelo, qualquer uma delas precisa de no máximo 1 join por dimensão. O Snowflake normalizaria demais para o volume do dataset, e o Flat duplicaria dados de loja/hub em cada linha sem necessidade.
 
 <img width="1192" height="907" alt="image" src="https://github.com/user-attachments/assets/fd3e8a1d-c06e-42c5-9744-6a4d080ce4d1" />
+
+### Catálogo de Dados
+ 
+Uma tabela por base (fonte) do schema `delivery_center.bronze`, com o nome de cada coluna, sua descrição de negócio, o formato em que ela chega na camada Bronze (tipo inferido automaticamente pelo Databricks a partir do CSV — confirmar com `DESCRIBE TABLE delivery_center.bronze.<nome>` e ajustar se divergir) e o formato final que ela assume no modelo Estrela (camada Gold), já refletindo renomeações e conversões de tipo feitas na transformação.
+ 
+#### `orders`
+ 
+| Coluna | Descrição do Dado | Formato Bronze | Formato Final |
+|---|---|---|---|
+| `order_id` | Identificador único do pedido | BIGINT | BIGINT — chave primária de `fact_orders` |
+| `store_id` | Loja que originou o pedido | BIGINT | BIGINT — FK para `dim_stores` |
+| `channel_id` | Canal de origem do pedido | BIGINT | BIGINT — FK para `dim_channels` |
+| `order_status` | Status final do pedido | STRING | VARCHAR(50) |
+| `order_amount` | Valor total do pedido | DOUBLE | DECIMAL(10,2) |
+| `order_delivery_fee` | Taxa de entrega cobrada no pedido | DOUBLE | DECIMAL(10,2) |
+| `order_delivery_cost` | Custo operacional da entrega para a Delivery Center | DOUBLE | DECIMAL(10,2) |
+| `order_created_day` | Dia de criação do pedido | BIGINT | INT — consumido na geração de `dim_date.date_id`, não persiste como coluna própria em `fact_orders` |
+| `order_created_month` | Mês de criação do pedido | BIGINT | INT — idem |
+| `order_created_year` | Ano de criação do pedido | BIGINT | INT — idem |
+| `order_moment_created` | Timestamp de criação do pedido | STRING *(confirmar — pode já vir como TIMESTAMP)* | TIMESTAMP, convertido com `to_timestamp()` |
+| `order_moment_accepted` | Timestamp de aceite do pedido pela loja | STRING *(confirmar)* | TIMESTAMP |
+| `order_moment_ready` | Timestamp em que o pedido ficou pronto | STRING *(confirmar)* | TIMESTAMP |
+| `order_moment_collected` | Timestamp de coleta pelo motorista | STRING *(confirmar)* | TIMESTAMP |
+| `order_moment_in_expedition` | Timestamp de início da expedição | STRING *(confirmar)* | TIMESTAMP |
+| `order_moment_delivering` | Timestamp de início do trajeto até o cliente | STRING *(confirmar)* | TIMESTAMP |
+| `order_moment_delivered` | Timestamp de entrega ao cliente | STRING *(confirmar)* | TIMESTAMP |
+| `order_moment_finished` | Timestamp de finalização do pedido | STRING *(confirmar)* | TIMESTAMP |
+| `order_metric_collected_time` | Duração até a coleta pelo motorista | DOUBLE | DECIMAL(10,2) |
+| `order_metric_paused_time` | Duração em pausa durante o processo | DOUBLE | DECIMAL(10,2) |
+| `order_metric_production_time` | Duração da produção do pedido na loja | DOUBLE | DECIMAL(10,2) |
+| `order_metric_walking_time` | Duração de caminhada do motorista | DOUBLE | DECIMAL(10,2) |
+| `order_metric_expediton_speed_time` | Duração da velocidade de expedição | DOUBLE | DECIMAL(10,2) |
+| `order_metric_transit_time` | Duração em trânsito até o cliente | DOUBLE | DECIMAL(10,2) |
+| `order_metric_cycle_time` | Duração total do ciclo do pedido, da criação à finalização | DOUBLE | DECIMAL(10,2) |
+ 
+#### `deliveries`
+ 
+| Coluna | Descrição do Dado | Formato Bronze | Formato Final |
+|---|---|---|---|
+| `delivery_order_id` | Pedido ao qual a entrega pertence (chave de junção com `orders.order_id`) | BIGINT | BIGINT — usado no join que monta `fact_orders`; não persiste como coluna própria no modelo final |
+| `driver_id` | Motorista responsável pela entrega | BIGINT | BIGINT — FK para `dim_drivers`, trazido para dentro de `fact_orders` |
+| `delivery_status` | Status da entrega | STRING | VARCHAR(50) |
+| `delivery_distance_meters` | Distância percorrida na entrega, em metros | BIGINT | BIGINT |
+ 
+#### `stores`
+ 
+| Coluna | Descrição do Dado | Formato Bronze | Formato Final |
+|---|---|---|---|
+| `store_id` | Identificador único da loja | BIGINT | BIGINT — chave primária de `dim_stores` |
+| `store_name` | Nome da loja | STRING | VARCHAR(255) |
+| `store_segment` | Segmento/categoria de atuação da loja | STRING | VARCHAR(100) |
+| `store_plan_price` | Valor do plano contratado pela loja na plataforma | DOUBLE | DECIMAL(10,2) |
+| `store_latitude` | Latitude da loja | DOUBLE | DOUBLE |
+| `store_longitude` | Longitude da loja | DOUBLE | DOUBLE |
+| `hub_id` | Hub ao qual a loja está associada | BIGINT | BIGINT — usado no join com `hubs` que achata os atributos do hub dentro de `dim_stores` |
+ 
+#### `hubs`
+ 
+| Coluna | Descrição do Dado | Formato Bronze | Formato Final |
+|---|---|---|---|
+| `hub_id` | Identificador único do hub | BIGINT | BIGINT — usado apenas no join; incorporado em `dim_stores`, sem tabela própria no modelo final |
+| `hub_name` | Nome do hub | STRING | VARCHAR(255) |
+| `hub_city` | Cidade do hub | STRING | VARCHAR(100) |
+| `hub_state` | UF do hub | STRING | VARCHAR(2) |
+| `hub_latitude` | Latitude do hub | DOUBLE | DOUBLE |
+| `hub_longitude` | Longitude do hub | DOUBLE | DOUBLE |
+ 
+#### `drivers`
+ 
+| Coluna | Descrição do Dado | Formato Bronze | Formato Final |
+|---|---|---|---|
+| `driver_id` | Identificador único do motorista | BIGINT | BIGINT — chave primária de `dim_drivers` |
+| `driver_modal` | Modal de entrega utilizado pelo motorista (ex.: moto, bike, carro) | STRING | VARCHAR(50) |
+| `driver_type` | Tipo de vínculo do motorista com a operação | STRING | VARCHAR(50) |
+ 
+#### `channels`
+ 
+| Coluna | Descrição do Dado | Formato Bronze | Formato Final |
+|---|---|---|---|
+| `channel_id` | Identificador único do canal do pedido | BIGINT | BIGINT — chave primária de `dim_channels` |
+| `channel_name` | Nome do canal de venda | STRING | VARCHAR(100) |
+| `channel_type` | Tipo/categoria do canal | STRING | VARCHAR(50) |
+ 
+#### `payments`
+ 
+| Coluna | Descrição do Dado | Formato Bronze | Formato Final |
+|---|---|---|---|
+| `payment_id` | Identificador único do pagamento | BIGINT | BIGINT — chave primária de `fact_payments` |
+| `payment_order_id` | Pedido ao qual o pagamento se refere | BIGINT | BIGINT — renomeado para `order_id`, FK para `fact_orders` |
+| `payment_amount` | Valor pago nesta transação | DOUBLE | DECIMAL(10,2) |
+| `payment_fee` | Taxa cobrada sobre o pagamento | DOUBLE | DECIMAL(10,2) |
+| `payment_method` | Método de pagamento utilizado | STRING | VARCHAR(50) |
+| `payment_status` | Status do pagamento | STRING | VARCHAR(50) |
+ 
+*(Nota: os campos marcados "confirmar" nos timestamps de `orders` dependem de como o Databricks inferiu o tipo no upload do CSV — rodar `DESCRIBE TABLE delivery_center.bronze.orders` e ajustar a coluna "Formato Bronze" se o tipo real vier diferente de STRING. Complementar opcional: os mesmos textos de descrição podem ser colados no campo "Comment" de cada coluna, na aba "Columns" de cada tabela no Unity Catalog, deixando a documentação também visível direto no Databricks.)*
+ 
 
 
