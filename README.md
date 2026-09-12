@@ -62,29 +62,23 @@ O dataset é estático, então a carga foi feita pelo caminho mais simples, down
 ### Passo a passo
  
 **1. Download do Kaggle**
-O arquivo `.zip` do dataset foi baixado diretamente da página do Kaggle (link e licença documentados no Tópico 1) e extraído localmente, resultando em 7 arquivos CSV — um por entidade: `orders`, `deliveries`, `stores`, `hubs`, `drivers`, `channels` e `payments`.
+O arquivo `.zip` do dataset foi baixado diretamente da página do Kaggle e extraído localmente, resultando em 7 arquivos CSV um por entidade: `orders`, `deliveries`, `stores`, `hubs`, `drivers`, `channels` e `payments`.
  
 **2. Criação da estrutura de destino no Unity Catalog**
 Antes de subir qualquer arquivo, foi criada a organização que recebe os dados, seguindo a Arquitetura Medalhão:
-- Catálogo `delivery_center` (tipo Standard, storage padrão do metastore)
-- Três schemas dentro dele: `bronze` (dados brutos, sem transformação), `silver` (dados limpos — Etapa 4.4) e `gold` (dados modelados para análise — Etapa 4.3/4.4)
+- Catálogo `delivery_center`
+- Três schemas dentro dele: `bronze` (dados brutos, sem transformação), `silver` (dados limpos) e `gold` (dados modelados para análise)
   
 **3. Upload de cada CSV como tabela Bronze**
-Usando o recurso **"Create table from file"** do Catalog Explorer (compute: *Serverless Starter Warehouse*), cada um dos 7 CSVs foi enviado individualmente para dentro do schema `delivery_center.bronze`, com o nome da tabela correspondendo ao nome da entidade (ex: `delivery_center.bronze.orders`). O Databricks já inferiu automaticamente o tipo de cada coluna a partir do conteúdo do arquivo (inteiros, strings, decimais, datas/horas).
- 
-> **Nota de processo:** na primeira tentativa, os 7 arquivos foram selecionados juntos no upload, e a interface tentou combinar colunas de arquivos diferentes em uma única tabela (misturando, por exemplo, colunas de motoristas com colunas de lojas). O erro foi identificado no preview de colunas antes da criação da tabela, e corrigido subindo os arquivos **um de cada vez**. Essa checagem do preview antes de confirmar a criação foi o que permitiu pegar o problema a tempo.
+Usando o recurso **"Create table from file"** do Catalog Explorer, cada um dos 7 CSVs foi enviado individualmente para dentro do schema `delivery_center.bronze`, com o nome da tabela correspondendo ao nome da entidade. O Databricks já inferiu automaticamente o tipo de cada coluna a partir do conteúdo do arquivo.
  
 **4. Conferência final**
-Ao final, o schema `bronze` ficou com as 7 tabelas esperadas, cada uma com o schema correto (colunas e tipos batendo com o arquivo de origem correspondente):
-`delivery_center.bronze.orders`, `.deliveries`, `.stores`, `.hubs`, `.drivers`, `.channels`, `.payments`.
+Ao final, o schema `bronze` ficou com as 7 tabelas esperadas, cada uma com o schema correto.
  
 ### Evidências (screenshots)
 - Criação do catálogo `delivery_center` e dos schemas `bronze`/`silver`/`gold`
-- Tela de preview de colunas durante o "Create table from file" (incluindo o erro identificado e a correção)
-- Lista final das 7 tabelas dentro do schema `bronze`
-*(Screenshots já capturados ao longo do processo — anexar as imagens correspondentes nesta seção do documento final.)*
  
 ### Scripts
-Não se aplica nesta etapa — a carga foi feita via interface gráfica do Databricks (upload direto), sem necessidade de notebook ou script de ingestão, já que o volume e a natureza estática do dataset não justificavam automação nesta fase. A automação (leitura programática e transformação) começa na Etapa 4.4 (Pipeline de Dados/ETL), via notebooks PySpark/SQL versionados no repositório GitHub.
+Não se aplica nesta etapa, a carga foi feita via interface gráfica do Databricks (upload direto), sem necessidade de notebook ou script de ingestão, já que o volume e a natureza estática do dataset não justificavam automação nesta fase.
  
 ---
