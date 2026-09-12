@@ -78,12 +78,21 @@ Ao final, o schema `bronze` ficou com as 7 tabelas esperadas, cada uma com o sch
 ### Evidências (screenshots)
 
 - Criação do catálogo `delivery_center` e dos schemas `bronze`/`silver`/`gold`
+
 <img width="1908" height="983" alt="image" src="https://github.com/user-attachments/assets/748daf79-2938-41a7-80fe-058d371bc3e4" />
 
 - Inclusão dos documentos na pasta `bronze`
+
 <img width="1906" height="986" alt="image" src="https://github.com/user-attachments/assets/6c56d8b8-6d88-40ed-a13a-933348230d42" />
 
 ### Scripts
 Não se aplica nesta etapa, a carga foi feita via interface gráfica do Databricks (upload direto), sem necessidade de notebook ou script de ingestão, já que o volume e a natureza estática do dataset não justificavam automação nesta fase.
  
----
+## Modelagem e Catálogo de Dados
+ 
+### Modelo escolhido: Esquema Estrela
+Entre Estrela, Snowflake e Flat, o **Esquema Estrela** foi escolhido porque com o este modelo, qualquer uma delas precisa de no máximo 1 join por dimensão. O Snowflake normalizaria demais para o volume do dataset, e o Flat duplicaria dados de loja/hub em cada linha sem necessidade.
+
+<img width="1192" height="907" alt="image" src="https://github.com/user-attachments/assets/fd3e8a1d-c06e-42c5-9744-6a4d080ce4d1" />
+
+
