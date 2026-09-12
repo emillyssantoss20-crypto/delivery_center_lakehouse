@@ -76,8 +76,13 @@ Usando o recurso **"Create table from file"** do Catalog Explorer, cada um dos 7
 Ao final, o schema `bronze` ficou com as 7 tabelas esperadas, cada uma com o schema correto.
  
 ### Evidências (screenshots)
+
 - Criação do catálogo `delivery_center` e dos schemas `bronze`/`silver`/`gold`
- 
+<img width="1908" height="983" alt="image" src="https://github.com/user-attachments/assets/748daf79-2938-41a7-80fe-058d371bc3e4" />
+
+- Inclusão dos documentos na pasta `bronze`
+<img width="1906" height="986" alt="image" src="https://github.com/user-attachments/assets/6c56d8b8-6d88-40ed-a13a-933348230d42" />
+
 ### Scripts
 Não se aplica nesta etapa, a carga foi feita via interface gráfica do Databricks (upload direto), sem necessidade de notebook ou script de ingestão, já que o volume e a natureza estática do dataset não justificavam automação nesta fase.
  
