@@ -295,7 +295,7 @@ Cinco checagens rodadas no notebook `qualidade_dados.ipynb`, cobrindo:
 ELIXIR SHOPPING tem a maior distância mediana de entrega (14,4 km), cerca de **6 vezes maior** que a dos demais hubs (~2,3 km), mesmo com um volume de pedidos apenas mediano (~10,2 mil). Já hubs com volume muito maior, como SUBWAY, COFFEE e PURPLE, operam com distâncias menores. Isso indica que **o volume de pedidos não explica a distância de entrega** e sugere uma possível revisão da área de cobertura do ELIXIR SHOPPING.
 *(Nota de processo: hubs com menos de 100 pedidos no período foram excluídos dessa análise, pois estava distorcendo a mediana, como visto em RED SHOPPING e HUBLESS SHOPPING.)*
 
-<img width="473" height="281" alt="image" src="https://github.com/user-attachments/assets/6534aee1-0869-4780-90aa-c6d10eee3587" />
+<img width="632" height="375" alt="image" src="https://github.com/user-attachments/assets/0822f340-8767-42ed-a14b-f377c39891df" />
 
 **2. O status da entrega varia significativamente entre hubs ou estados?**
  
