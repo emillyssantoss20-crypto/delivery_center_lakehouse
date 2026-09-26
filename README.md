@@ -194,7 +194,7 @@ Uma tabela por base (fonte) do schema `delivery_center.bronze`, com o nome de ca
  
 ### Organização do ETL
 
-O pipeline foi implementado em um notebook no Databricks, versionado no repositório em `cod_delivery_center.ipynb`. O notebook é organizado em células curtas e intercaladas: para cada tabela, uma célula de markdown explica o que foi feito, seguida imediatamente da célula `%sql` que executa a transformação, célula a célula. Ele segue duas partes sequenciais:
+O pipeline foi implementado em um notebook no Databricks, versionado no repositório em `ETL Pipeline.ipynb`. O notebook é organizado em células curtas e intercaladas: para cada tabela, uma célula de markdown explica o que foi feito, seguida imediatamente da célula `%sql` que executa a transformação, célula a célula. Ele segue duas partes sequenciais:
 
 **1. Bronze → Silver** (limpeza e padronização, sem mudar o significado dos dados)
  
@@ -221,7 +221,7 @@ O pipeline foi implementado em um notebook no Databricks, versionado no reposit�
  
 ### Como executar
 
-1. Abrir o notebook `cod_delivery_center.ipynb` no Databricks (dentro do Git folder do repositório).
+1. Abrir o notebook `ETL Pipeline` no Databricks (dentro do Git folder do repositório).
 2. Rodar todas as células em sequência ("Run All") — cada célula de markdown documenta a tabela que a célula `%sql` logo abaixo cria.
 3. Conferir no Catalog Explorer que os schemas `delivery_center.silver` e `delivery_center.gold` passaram a ter as 7 e 6 tabelas, respectivamente.
 
