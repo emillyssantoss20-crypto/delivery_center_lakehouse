@@ -218,6 +218,8 @@ O pipeline foi implementado em um notebook no Databricks, versionado no reposit�
 | `dim_date` | combinações únicas de `order_created_day/month/year` de `orders`, com chave substituta (`date_id`) gerada via `ROW_NUMBER()` |
 | `fact_orders` | `orders` + `deliveries` unidas |
 | `fact_payments` | cópia de `silver.payments`, renomeando `payment_order_id` → `order_id` |
+
+> **Nota de processo:** Foi identificado um problema na conversão dos campos de data e hora (order_moment_*) devido à incompatibilidade de formato. A solução foi definir explicitamente o padrão da data e utilizar uma conversão mais segura (try_to_timestamp()), evitando falhas na geração da tabela.
  
 ### Como executar
 
@@ -230,6 +232,56 @@ O pipeline foi implementado em um notebook no Databricks, versionado no reposit�
 - Criação de tabelas bronze e gold com o código executado sem erros.
 
 <img width="1908" height="987" alt="image" src="https://github.com/user-attachments/assets/8daa62c9-34f3-404f-aa8d-9ef8aedeedcc" />
+
+## 5. Qualidade de Dados
+ 
+### Dimensões avaliadas e como
+Cinco checagens rodadas no notebook `qualidade_dados.ipynb`, cobrindo:
+ 
+| Dimensão | O que foi checado |
+|---|---|
+| Integridade dos Dados | Contagem de linhas Bronze × Silver em cada uma das 7 tabelas — a diferença mostra quantas linhas foram descartadas por duplicata exata ou por não ter chave primária |
+| Conversão de Datas e Horários | Nulos introduzidos pela conversão dos 8 campos `order_moment_*` para `TIMESTAMP` — comparando a quantidade de nulos no Bronze (antes) com a do Silver (depois), não o valor absoluto |
+| Consistência das Chaves Estrangeiras | Pedidos em `fact_orders` sem correspondência em alguma dimensão (`store_id`, `driver_id`, `channel_id` ou `date_id` nulos após o join) |
+| Valores Numéricos Suspeitos | Valores negativos em campos que não fazem sentido de negócio (`order_amount`, `order_delivery_fee`, `order_delivery_cost`, `delivery_distance_meters`) |
+| Unicidade das Dimensões | Confirmação de que as dimensões não têm chave primária duplicada |
+ 
+### Resultados
+ 
+**1ª Validação — Integridade dos Dados**
+ 
+<img width="1342" height="543" alt="image" src="https://github.com/user-attachments/assets/78414624-468f-4947-9db5-13d1ed4dcaaa" />
+
+**Resultado:** Silver ficou igual ou menor que Bronze em todas as tabelas ou seja critério atendido. `deliveries` foi a única com queda expressiva (20.189 linhas), mas por um motivo diferente das demais: não é duplicata exata nem falta de chave primária, é a deduplicação por `delivery_order_id` aplicada na correção da 3ª Validação (múltiplos registros de entrega para o mesmo pedido — ver nota de processo abaixo). As demais 6 tabelas não tinham nenhuma duplicata nem linha sem chave primária no Bronze.
+ 
+**2ª Validação — Conversão de Datas e Horários**
+ 
+<img width="1336" height="532" alt="image" src="https://github.com/user-attachments/assets/0999dfd1-b1c4-4728-8834-42008a7e4d9d" />
+
+**Resultado:** Diferença zero em todos os campos, a conversão para `TIMESTAMP` não introduziu nenhum nulo novo. Todos os nulos já existiam no dado bruto (Bronze), incluindo o alto volume em `order_moment_delivered` (94,7%).
+ 
+> **Nota de processo:** a validação começou medindo só o volume absoluto de nulos no Silver, com a régua "quanto menor, melhor". Isso levantou uma suspeita falsa: `order_moment_delivered` com 94,7% de nulos parecia um possível erro de formatação na conversão. Comparando com a contagem de nulos do Bronze (antes de qualquer conversão), veio a resposta real, o valor já nascia vazio na origem, então a régua certa não é "volume absoluto de nulos", e sim "a conversão criou algum nulo que não existia antes?". Com esse critério, o resultado é claramente positivo (diferença zero) e fica registrado aqui porque é o tipo de refinamento que só aparece testando a própria validação.
+ 
+**3ª Validação — Consistência das chaves estrangeiras**
+ 
+<img width="1326" height="512" alt="image" src="https://github.com/user-attachments/assets/fecf9227-b6d8-4fad-a436-2a39ebc1576f" />
+
+> **Nota de processo — grão de `fact_orders` quebrado:** o achado mais importante desta validação não estava nas colunas checadas, e sim no `total_pedidos`: 378.902, um número **maior** que as 368.999 linhas de `silver.orders` — ou seja, `fact_orders` tinha mais de 1 linha por pedido em alguns casos, quebrando o grão definido no Tópico 3. Investigando, descobrimos 9.531 pedidos com mais de um registro em `silver.deliveries` (mesmo `delivery_order_id`, motoristas diferentes — e num caso, até status conflitante: `DELIVERED` e `CANCELLED` para o mesmo pedido). Corrigido deduplicando `deliveries` antes do join, mantendo 1 linha por pedido e priorizando `DELIVERED` sobre `CANCELLED`.
+ 
+**Resultado após a correção:** `total_pedidos` = 368.999 — bate exatamente com `silver.orders`, confirmando que o grão foi restaurado. `sem_store_id` = 0, `sem_driver_id` = 25.583 (6,9% — caiu levemente dos 25.773 iniciais, já que a deduplicação passou a preferir a linha com motorista atribuído quando havia empate de status), `sem_channel_id` = 0, `sem_date_id` = 0.
+ 
+**4ª Validação — Valores numéricos suspeitos**
+
+<img width="1363" height="565" alt="image" src="https://github.com/user-attachments/assets/14758a22-101e-4bfe-afab-b71399329fa3" />
+
+**Resultado:** Nenhuma inconsistência encontrada.
+ 
+**5ª Validação — Unicidade das dimensões**
+ 
+<img width="1332" height="577" alt="image" src="https://github.com/user-attachments/assets/04b91392-5280-4bde-ac52-2c926a459188" />
+
+**Resultado:** Nenhuma chave primária duplicada.
+ 
 
 
 
