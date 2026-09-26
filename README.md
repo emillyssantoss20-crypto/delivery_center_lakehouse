@@ -193,6 +193,31 @@ Uma tabela por base (fonte) do schema `delivery_center.bronze`, com o nome de ca
 ## 4. Pipeline de Dados
  
 ### Organização do ETL
+
+O pipeline foi implementado em um notebook no Databricks, versionado no repositório em `cod_delivery_center.ipynb`. O notebook é organizado em células curtas e intercaladas: para cada tabela, uma célula de markdown explica o que foi feito, seguida imediatamente da célula `%sql` que executa a transformação, célula a célula. Ele segue duas partes sequenciais:
+
+**1. Bronze → Silver** (limpeza e padronização, sem mudar o significado dos dados)
+ 
+| Tabela | Duplicatas/nulos removidos | Conversões de tipo | Demais campos |
+|---|---|---|---|
+| `orders` | `DISTINCT` + descarta `order_id IS NULL` | `order_amount`, `order_delivery_fee`, `order_delivery_cost` → `DECIMAL(10,2)`; os 8 `order_moment_*` → `TIMESTAMP` (via `try_to_timestamp`, formato `M/d/yyyy h:mm:ss a`); os 7 `order_metric_*` → `DECIMAL(10,2)` | `order_status`, `store_id`, `channel_id`, `order_created_day/month/year` mantidos como vieram |
+| `deliveries` | `DISTINCT` + descarta `delivery_order_id IS NULL` | `delivery_distance_meters` → `BIGINT` | `driver_id`, `delivery_status` sem alteração |
+| `stores` | `DISTINCT` + descarta `store_id IS NULL` | `store_plan_price` → `DECIMAL(10,2)` | `store_name`, `store_segment`, `store_latitude/longitude`, `hub_id` sem alteração |
+| `hubs` | `DISTINCT` + descarta `hub_id IS NULL` | nenhuma | todos os campos mantidos como vieram |
+| `drivers` | `DISTINCT` + descarta `driver_id IS NULL` | nenhuma | todos os campos mantidos como vieram |
+| `channels` | `DISTINCT` + descarta `channel_id IS NULL` | nenhuma | todos os campos mantidos como vieram |
+| `payments` | `DISTINCT` + descarta `payment_id IS NULL` | `payment_amount`, `payment_fee` → `DECIMAL(10,2)` | `payment_order_id`, `payment_method`, `payment_status` sem alteração |
+ 
+**2. Silver → Gold** (remodelagem para o Esquema Estrela definido no Tópico 3)
+ 
+| Tabela Gold | O que foi feito |
+|---|---|
+| `dim_stores` | `stores` + `hubs` unidas |
+| `dim_drivers` | cópia direta de `silver.drivers`, sem alteração |
+| `dim_channels` | cópia direta de `silver.channels`, sem alteração |
+| `dim_date` | combinações únicas de `order_created_day/month/year` de `orders`, com chave substituta (`date_id`) gerada via `ROW_NUMBER()` |
+| `fact_orders` | `orders` + `deliveries` unidas |
+| `fact_payments` | cópia de `silver.payments`, renomeando `payment_order_id` → `order_id` |
  
 
 
