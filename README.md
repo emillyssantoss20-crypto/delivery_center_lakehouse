@@ -219,5 +219,11 @@ O pipeline foi implementado em um notebook no Databricks, versionado no reposit�
 | `fact_orders` | `orders` + `deliveries` unidas |
 | `fact_payments` | cópia de `silver.payments`, renomeando `payment_order_id` → `order_id` |
  
+### Como executar
 
+1. Abrir o notebook `cod_delivery_center.ipynb` no Databricks (dentro do Git folder do repositório).
+2. Rodar todas as células em sequência ("Run All") — cada célula de markdown documenta a tabela que a célula `%sql` logo abaixo cria.
+3. Conferir no Catalog Explorer que os schemas `delivery_center.silver` e `delivery_center.gold` passaram a ter as 7 e 6 tabelas, respectivamente.
+
+### Evidências (screenshots)
 
