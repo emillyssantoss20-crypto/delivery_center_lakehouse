@@ -229,7 +229,8 @@ O pipeline foi implementado em um notebook no Databricks, versionado no reposit�
 
 - Criação de tabelas bronze e gold com o código executado sem erros.
 
-<img width="1907" height="988" alt="image" src="https://github.com/user-attachments/assets/2709aad3-555d-4220-ad12-9cbf0c053126" />
+<img width="1908" height="987" alt="image" src="https://github.com/user-attachments/assets/8daa62c9-34f3-404f-aa8d-9ef8aedeedcc" />
+
 
 
 
