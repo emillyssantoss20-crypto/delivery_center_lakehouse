@@ -308,7 +308,7 @@ ELIXIR SHOPPING tem a maior distância mediana de entrega (14,4 km), cerca de **
  
 Sim. **O segmento GOOD tem um ticket médio de R$ 249,33, mais que o dobro da média geral (R$ 105,15)** e bem acima do FOOD em todos os meses analisados. Isso mostra que os pedidos de GOOD geram mais receita por transação, tornando o segmento uma prioridade comercial.
  
-<img width="473" height="285" alt="image" src="https://github.com/user-attachments/assets/8975e562-5728-41f3-93e4-3eb613e8c0aa" />
+<img width="631" height="362" alt="image" src="https://github.com/user-attachments/assets/af194b15-387c-4b33-ae8d-e0fe27ade447" />
 
 **4. Como o volume e o valor total dos pedidos evoluem mês a mês no período coberto pelos dados?**
  
