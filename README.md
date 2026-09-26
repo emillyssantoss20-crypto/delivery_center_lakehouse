@@ -282,7 +282,100 @@ Cinco checagens rodadas no notebook `qualidade_dados.ipynb`, cobrindo:
 
 **Resultado:** Nenhuma chave primária duplicada.
  
+## Análise de Dados (Etapa 4.5)
+ 
+### Dashboard
+ 
+📊 [Dashboard Power BI (.pbix)](https://drive.google.com/file/d/1H-NXhA-Mm4Ol5lWJZRrZZfQbNiXzTkXb/view?usp=drive_link) — arquivo hospedado no Google Drive (acima do limite de tamanho para versionamento no GitHub). Baixe e abra no Power BI Desktop para navegar pelo relatório completo (3 páginas: Visão Geral, Diagnóstico de Falhas, Tempo de Ciclo).
+ 
+### Respostas às perguntas de negócio
+ 
+**1. Quais hubs apresentam a maior distância média de entrega, e isso se relaciona com o volume de pedidos atendidos por hub?**
+ 
+ELIXIR SHOPPING tem a maior distância mediana de entrega (14,4 km), cerca de **6 vezes maior** que a dos demais hubs (~2,3 km), mesmo com um volume de pedidos apenas mediano (~10,2 mil). Já hubs com volume muito maior, como SUBWAY, COFFEE e PURPLE, operam com distâncias menores. Isso indica que **o volume de pedidos não explica a distância de entrega** e sugere uma possível revisão da área de cobertura do ELIXIR SHOPPING.
+*(Nota de processo: hubs com menos de 100 pedidos no período foram excluídos dessa análise, pois estava distorcendo a mediana, como visto em RED SHOPPING e HUBLESS SHOPPING.)*
 
+<img width="473" height="281" alt="image" src="https://github.com/user-attachments/assets/6534aee1-0869-4780-90aa-c6d10eee3587" />
+
+**2. O status da entrega varia significativamente entre hubs ou estados?**
+ 
+**Sim**. O ELIXIR SHOPPING tem a maior taxa de cancelamento (13,6%) entre os hubs com mais de 100 pedidos, muito acima dos demais. O resultado reforça a análise anterior: além de ter a maior distância média de entrega, também é o hub com mais cancelamentos, **indicando um possível problema na sua área de cobertura**.
+ 
+<img width="482" height="282" alt="image" src="https://github.com/user-attachments/assets/1644cafc-449d-4d99-8e6f-cbda0fcd9d0a" />
+
+ 
+**3. O segmento da loja influencia o valor médio dos pedidos?**
+ 
+Sim. **O segmento GOOD tem um ticket médio de R$ 249,33, mais que o dobro da média geral (R$ 105,15)** e bem acima do FOOD em todos os meses analisados. Isso mostra que os pedidos de GOOD geram mais receita por transação, tornando o segmento uma prioridade comercial.
+ 
+<img width="473" height="285" alt="image" src="https://github.com/user-attachments/assets/8975e562-5728-41f3-93e4-3eb613e8c0aa" />
+
+**4. Como o volume e o valor total dos pedidos evoluem mês a mês no período coberto pelos dados?**
+ 
+O volume de pedidos cresceu **45,1%** entre janeiro e abril de 2021, passando de 75 mil para 109 mil pedidos. Após uma leve queda em fevereiro, houve forte crescimento em março, seguido de estabilização em abril. Como a análise cobre apenas quatro meses, o resultado indica uma tendência de curto prazo e **não permite concluir sobre sazonalidade**.
+ 
+<img width="577" height="342" alt="image" src="https://github.com/user-attachments/assets/7aac656f-bb34-4c06-bf3b-f6bcb8aea96a" />
+
+**5. Quais estados concentram a maior receita total e qual é o ticket médio por estado?**
+ 
+| Estado | Pedidos | Receita Total | Ticket Médio |
+|---|---|---|---|
+| SP | 168 Mil | R$ 21,45 Mi | R$ 127,97 |
+| RJ | 138 Mil | R$ 12,31 Mi | R$ 89,50 |
+| RS | 34 Mil | R$ 2,99 Mi | R$ 86,96 |
+| PR | 29 Mil | R$ 2,04 Mi | R$ 69,58 |
+ 
+São Paulo concentra a maior receita total (R$ 21,45 Mi) e também o maior ticket médio (R$ 127,97) — é o estado mais valioso tanto em volume quanto em valor por pedido. Rio de Janeiro vem em segundo em ambas as métricas (R$ 12,31 Mi / R$ 89,50). Rio Grande do Sul e Paraná têm volume e receita bem menores (~R$ 2–3 Mi cada) e ticket médio também mais baixo. A ordem de prioridade de investimento regional, tanto por escala quanto por valor médio de pedido, é: SP > RJ > RS > PR.
+ 
+🔲 *print: cards de "Total de pedidos"/"Receita total" + gráfico "Ticket médio por segmento" (P3), filtrados por estado.*
+ 
+**6. Quais hubs têm a maior taxa de cancelamento de entregas em relação ao volume de pedidos recebidos?**
+ 
+Entre os hubs com volume suficiente (100+ pedidos), ELIXIR SHOPPING tem, disparado, a maior taxa de cancelamento (13,6%) — mais que o triplo do segundo colocado, STAR SHOPPING (4,1%), e muito acima da maioria dos hubs, que ficam na faixa de 1–3%. Esse é o terceiro achado consecutivo apontando para o mesmo hub (maior distância mediana na pergunta 1, maior taxa de cancelamento aqui e na pergunta 2), reforçando ELIXIR SHOPPING como prioridade máxima de intervenção operacional — provavelmente ligada ao tamanho excessivo da sua área de cobertura.
+ 
+*Nota de processo: hubs com menos de 100 pedidos no período (ex: FUNK SHOPPING, RED SHOPPING, HUBLESS SHOPPING) foram excluídos dessa análise — com volume tão baixo, poucos cancelamentos já geram uma taxa percentual enganosamente alta (ex: FUNK SHOPPING chegava a aparecer com 31% de cancelamento, mas isso vinha de apenas 28 pedidos cancelados em um total de 89).*
+ 
+🔲 *print: gráfico "Taxa de cancelamento por hub" (P6), com o filtro de 100+ pedidos aplicado.*
+ 
+**7. Existe relação entre distância de entrega e taxa de cancelamento?**
+ 
+Existe uma relação clara no extremo, mas não um padrão linear forte no restante da operação. ELIXIR SHOPPING é o único hub que se destaca nas duas métricas simultaneamente — maior distância mediana (14,4 km) e maior taxa de cancelamento (13,6%), muito acima de qualquer outro hub — o que sustenta a hipótese de que problemas de cobertura geográfica extrema levam a mais falhas de entrega. Já entre os demais hubs (distâncias entre 1,3 e 3,4 km), não há uma correlação forte: por exemplo, STAR SHOPPING tem distância baixa (1,76 km) mas cancelamento acima da média (4,05%). Ou seja, distância extrema é um fator de risco claro, mas não é o único nem o principal fator de cancelamento na faixa "normal" de operação.
+ 
+🔲 *print: gráfico de dispersão "Distância × taxa de cancelamento" (P7), por hub e com o filtro de 100+ pedidos aplicado.*
+ 
+**8. Algum tipo/modal de motorista concentra proporcionalmente mais entregas com status de falha?**
+ 
+Não, entre os motoristas efetivamente designados: MOTOBOY (99,96%) e BIKER (99,97%) têm taxas de entrega praticamente idênticas e virtualmente perfeitas — a escolha do modal não é um fator de risco relevante. O problema real está nos pedidos sem motorista atribuído ("Em branco"): esse grupo concentra 27,7% de cancelamento, muito acima de qualquer modal designado. Ou seja, a falha não está ligada ao tipo de veículo/motorista usado na entrega, mas sim à etapa anterior — o processo de atribuição de motorista. Pedidos que não conseguem um motorista designado têm risco de cancelamento drasticamente maior do que qualquer diferença entre modais.
+ 
+🔲 *print: gráfico "Status da entrega por modal do motorista" (P8).*
+ 
+**9. Pedidos com pagamento não aprovado estão concentrados em algum canal, método de pagamento ou hub específico?**
+ 
+Não foi identificada uma concentração relevante por canal. A taxa geral de pagamentos não concluídos é muito baixa (0,11%) e se distribui de forma relativamente uniforme entre os canais — o maior valor (SHOPP PLACE, 0,37%) ainda representa um volume pequeno em termos absolutos. O canal dominante em volume, FOOD PLACE (288.723 pagamentos, 78% do total), tem taxa praticamente igual à média geral (0,12%). Diferente das demais perguntas de diagnóstico, aqui não há um ponto de falha crítico a corrigir — o processo de cobrança se mostra estável na maior parte da operação.
+ 
+🔲 *print: tabela "Pagamentos não concluídos por canal" (P9).*
+ 
+**10. Qual é o tempo médio total do ciclo do pedido por hub, e quais estão significativamente acima da média geral da operação?**
+ 
+Sim, há hubs significativamente acima da média — mais uma vez, ELIXIR SHOPPING é o caso extremo. Usando a mediana (mais robusta a valores extremos que a média — a média chegava a 3.037 min, claramente distorcida por outliers pontuais), ELIXIR SHOPPING ainda apresenta tempo de ciclo mediano de 1.566 minutos (~26h), contra uma faixa de 32 a 47 minutos em todos os demais hubs — quase 40× mais lento. Diferente do que ocorreu na distância (onde a mediana resolveu a distorção), aqui o valor segue extremamente alto mesmo após a correção, o que indica que não se trata apenas de outliers pontuais, e sim de um problema real e generalizado na operação desse hub — reforçando pela terceira vez que ELIXIR SHOPPING é a prioridade de investigação operacional (já era o hub com maior distância mediana e maior taxa de cancelamento).
+ 
+*Nota de processo: como nas perguntas anteriores, aplicamos o filtro de hubs com 100+ pedidos (para descartar distorção por amostra pequena) e usamos mediana em vez de média, já que `order_metric_cycle_time` também apresenta outliers, assim como `delivery_distance_meters`. Ainda assim, o valor de ELIXIR SHOPPING permanece drasticamente acima dos demais — ao contrário da distância, aqui a distorção estatística não explica todo o efeito, sugerindo um gargalo operacional real nesse hub que mereceria investigação mais aprofundada (fora do escopo deste MVP).*
+ 
+🔲 *print: gráfico "Tempo médio de ciclo por hub" (P10, com mediana).*
+ 
+**11. Das etapas do processo, qual mais contribui para o tempo total do ciclo?**
+ 
+A etapa de Produção é a que mais pesa no tempo total do ciclo, com média de 61,79 minutos (42,8% do tempo total), seguida por Trânsito, com 46,85 minutos (32,4%). As demais etapas — Expedição (19,08 min), Pausa (9,19 min), Deslocamento até a loja (4,77 min) e Coleta (2,76 min) — têm impacto bem menor. Isso indica que o investimento corretivo prioritário deve ir para a etapa de produção nas lojas (tempo de preparo do pedido), não para a frota de entrega, já que produção pesa quase 30% a mais que o trânsito no tempo total do processo.
+ 
+*Achado complementar: em ELIXIR SHOPPING, a etapa de Produção sozinha chega a uma média de 1.748 minutos (~29h) — um valor completamente fora do padrão dos demais hubs (13 a 115 min) — confirmando que o gargalo de tempo de ciclo identificado na pergunta 10 para esse hub está concentrado na etapa de produção da loja, não no deslocamento do motorista.*
+ 
+🔲 *print: tabela "Composição do tempo de ciclo por etapa" (P11).*
+ 
+**12. Existe relação entre tempo pausado (`order_metric_paused_time`) e o status final da entrega?**
+ 
+Sim. Pedidos que terminam CANCELLED têm tempo médio pausado de 12 minutos, 33% maior que os pedidos DELIVERED (9 minutos) — ou seja, pausas mais longas estão associadas a maior risco de cancelamento, sustentando a hipótese de um alerta proativo (pausa anormalmente longa como sinal de risco antes do desfecho final). O status DELIVERING aparece com o maior tempo pausado (19,6 min), mas isso reflete pedidos ainda em andamento no momento da coleta dos dados — a pausa continua "correndo" e não é comparável aos status já finalizados. A comparação relevante para o alerta proativo é, portanto, CANCELLED (12 min) vs. DELIVERED (9 min).
+ 
+🔲 *print: gráfico "Tempo médio pausado por status final" (P12).*
 
 
 
