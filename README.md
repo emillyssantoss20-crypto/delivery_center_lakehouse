@@ -189,6 +189,10 @@ Uma tabela por base (fonte) do schema `delivery_center.bronze`, com o nome de ca
 | `payment_status` | Status do pagamento | STRING | VARCHAR(50) |
  
 *(Nota: os campos marcados "confirmar" nos timestamps de `orders` dependem de como o Databricks inferiu o tipo no upload do CSV — rodar `DESCRIBE TABLE delivery_center.bronze.orders` e ajustar a coluna "Formato Bronze" se o tipo real vier diferente de STRING. Complementar opcional: os mesmos textos de descrição podem ser colados no campo "Comment" de cada coluna, na aba "Columns" de cada tabela no Unity Catalog, deixando a documentação também visível direto no Databricks.)*
+
+## 4. Pipeline de Dados
+ 
+### Organização do ETL
  
 
 
