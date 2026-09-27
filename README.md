@@ -282,7 +282,7 @@ Cinco checagens rodadas no notebook `qualidade_dados.ipynb`, cobrindo:
 
 **Resultado:** Nenhuma chave primária duplicada.
  
-## 5. Análise de Dados
+## 6. Análise de Dados
  
 ### Dashboard
  
@@ -387,7 +387,7 @@ Sim. **Pedidos que terminam CANCELLED têm tempo médio pausado de 12 minutos**,
  
 <img width="616" height="355" alt="image" src="https://github.com/user-attachments/assets/65aeccc2-3159-401a-9238-f15c3c297480" />
 
-## 6. Autoavaliação
+## 7. Autoavaliação
  
 **Objetivos atingidos:** o pipeline foi construído de ponta a ponta na Arquitetura Medalhão (Bronze → Silver → Gold) no Databricks, com qualidade de dados validada em 5 dimensões e um dashboard em Power BI respondendo às 12 perguntas de negócio definidas na Etapa 2. O objetivo central do MVP — transformar dados operacionais brutos em decisões foi cumprido, com um achado forte e consistente (**ELIXIR SHOPPING** como hub crítico, confirmado por três métricas independentes: distância, cancelamento e tempo de ciclo).
  
