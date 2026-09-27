@@ -2,7 +2,7 @@
 
 **Nome:** Emilly da Silva Santos  
 **Matrícula:** 4052026000270  
-**Data:** 26/09/2026
+**Data:** 26/09/2026 
 **Dataset:** Brazilian Delivery Center (Kaggle)
 
 Trabalho da disciplina de Engenharia de Dados (PUC-Rio). Pipeline de dados end‑to‑end construído no Databricks, seguindo a Arquitetura Medalhão (Bronze → Silver → Gold).
