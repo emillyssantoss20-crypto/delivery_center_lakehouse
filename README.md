@@ -2,7 +2,7 @@
 
 **Nome:** Emilly da Silva Santos  
 **Matrícula:** 4052026000270  
-**Data:**  -
+**Data:** 26/09/2026
 **Dataset:** Brazilian Delivery Center (Kaggle)
 
 Trabalho da disciplina de Engenharia de Dados (PUC-Rio). Pipeline de dados end‑to‑end construído no Databricks, seguindo a Arquitetura Medalhão (Bronze → Silver → Gold).
@@ -387,6 +387,22 @@ Sim. **Pedidos que terminam CANCELLED têm tempo médio pausado de 12 minutos**,
  
 <img width="616" height="355" alt="image" src="https://github.com/user-attachments/assets/65aeccc2-3159-401a-9238-f15c3c297480" />
 
-
+## 6. Autoavaliação
+ 
+**Objetivos atingidos:** o pipeline foi construído de ponta a ponta na Arquitetura Medalhão (Bronze → Silver → Gold) no Databricks, com qualidade de dados validada em 5 dimensões e um dashboard em Power BI respondendo às 12 perguntas de negócio definidas na Etapa 2. O objetivo central do MVP — transformar dados operacionais brutos em decisões foi cumprido, com um achado forte e consistente (**ELIXIR SHOPPING** como hub crítico, confirmado por três métricas independentes: distância, cancelamento e tempo de ciclo).
+ 
+**Principais dificuldades técnicas:**
+- Pedidos duplicados em fact_orders, corrigidos com regra de priorização de status.
+- Distorção estatística por outliers e hubs de baixíssimo volume (2 a 89 pedidos), que geravam taxas/médias enganosas e foi resolvido com filtro de significância (100+ pedidos) e uso de mediana em vez de média para `delivery_distance_meters` e `order_metric_cycle_time`.
+- Erros de construção no próprio Power BI (agregação errada — soma em vez de média —, campos trocados entre visuais, granularidade errada em gráficos de dispersão), corrigidos iterativamente durante a montagem do dashboard.
+**Perguntas não respondíveis com os dados atuais:** Análises de retenção de clientes e margem por hub não puderam ser realizadas por falta de dados necessários no dataset.
+ 
+**Limitações de dados:**
+- Janela de apenas 4 meses (jan–abr/2021): permite análise de tendência de curto prazo, mas não confirma sazonalidade.
+- Sem um SLA definido, o atraso só pode ser avaliado em comparação com a média da operação.
+- Ausência de customer_id e de informações de custos operacionais.
+- 
+**Trabalhos futuros sugeridos:** Para evoluir a análise, seria importante incluir um SLA formal, um identificador de cliente e dados de custos operacionais por entrega. Esses dados permitiriam explorar temas ainda pouco abordados neste estudo, como rentabilidade, valor do cliente e retenção. Além disso, vale investigar a causa raiz dos problemas do hub ELIXIR SHOPPING, que apresentou resultados consistentemente abaixo dos demais indicadores operacionais.
+ 
 
 
