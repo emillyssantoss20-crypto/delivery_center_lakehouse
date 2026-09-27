@@ -287,6 +287,16 @@ Cinco checagens rodadas no notebook `qualidade_dados.ipynb`, cobrindo:
 ### Dashboard
  
 📊 [Dashboard Power BI (.pbix)](https://drive.google.com/file/d/1H-NXhA-Mm4Ol5lWJZRrZZfQbNiXzTkXb/view?usp=drive_link) — arquivo hospedado no Google Drive (acima do limite de tamanho para versionamento no GitHub). Baixe e abra no Power BI Desktop para navegar pelo relatório completo (3 páginas: Visão Geral, Diagnóstico de Falhas, Tempo de Ciclo).
+
+1. Visão geral
+<img width="1425" height="807" alt="image" src="https://github.com/user-attachments/assets/a0674c68-0ce8-499e-93ba-921d84d370c6" />
+
+2.Diagnóstico
+<img width="1426" height="806" alt="image" src="https://github.com/user-attachments/assets/128d4a74-3c93-4a2e-a06d-369c8db83e59" />
+
+3.Tempo
+<img width="1421" height="805" alt="image" src="https://github.com/user-attachments/assets/4017abb7-ec91-45b6-bc2d-13c58dff187a" />
+
  
 ### Respostas às perguntas de negócio
  
