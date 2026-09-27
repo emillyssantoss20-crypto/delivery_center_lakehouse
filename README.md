@@ -401,7 +401,7 @@ Sim. **Pedidos que terminam CANCELLED têm tempo médio pausado de 12 minutos**,
 - Janela de apenas 4 meses (jan–abr/2021): permite análise de tendência de curto prazo, mas não confirma sazonalidade.
 - Sem um SLA definido, o atraso só pode ser avaliado em comparação com a média da operação.
 - Ausência de customer_id e de informações de custos operacionais.
-- 
+  
 **Trabalhos futuros sugeridos:** Para evoluir a análise, seria importante incluir um SLA formal, um identificador de cliente e dados de custos operacionais por entrega. Esses dados permitiriam explorar temas ainda pouco abordados neste estudo, como rentabilidade, valor do cliente e retenção. Além disso, vale investigar a causa raiz dos problemas do hub ELIXIR SHOPPING, que apresentou resultados consistentemente abaixo dos demais indicadores operacionais.
  
 
